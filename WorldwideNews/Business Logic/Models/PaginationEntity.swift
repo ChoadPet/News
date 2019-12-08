@@ -22,7 +22,7 @@ final class PaginationEntity {
     
     var canMakeRequestForNextPage: Bool {
         let b = updateState == .initial || updateState == .completed && !ended
-        print("\nCan make request?: \(b)")
+        debugPrint("🔥 Can make request: \(b)")
         return b
     }
     
@@ -35,11 +35,11 @@ final class PaginationEntity {
     
     func didReachEnd(totalResult: Int) {
         ended = page * pageSize >= totalResult
-        print("End: \(ended)")
+        debugPrint("❌ End: \(ended)")
     }
     
     func incrementPage() {
         page += 1
-        print("Increment page: \(page)")
+        debugPrint("➕ Increment page: \(page)")
     }
 }

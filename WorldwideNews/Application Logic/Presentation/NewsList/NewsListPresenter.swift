@@ -47,13 +47,12 @@ final class NewsListPresenter {
     func refreshData() {
         paginationModel.page = 1
         paginationModel.ended = false
+        
         if networkManager.reachability.isReachable() {
             requestNews { [weak self] news in
                 self?.dataSource.removeAll()
                 self?.dataSource.append(contentsOf: news)
             }
-        } else {
-            
         }
     }
     
@@ -74,21 +73,22 @@ final class NewsListPresenter {
     
     // MARK: - Private API
     private func requestNews(completion: @escaping (([NewsEntity]) -> Void)) {
-        let model = ArticleInput(pageSize: paginationModel.pageSize, page: paginationModel.page, language: Locale.current.languageCode ?? "en", keywordsOrPhrase: "fuck")
+        let model = ArticleInput(pageSize: paginationModel.pageSize, page: paginationModel.page, language: Locale.current.languageCode ?? "en", keywordsOrPhrase: "dogs")
+        
         if paginationModel.canMakeRequestForNextPage {
-            self.paginationModel.updateState = .processing
+            paginationModel.updateState = .processing
             networkManager.provideEverythingNews(model: model) { [weak self] response in
                 guard let self = self else { return }
-                guard let result = response, !(result.articles?.isEmpty ?? true) else {
-                    self.paginationModel.updateState = .completed
+                self.paginationModel.updateState = .completed
+                guard let result = response, let articles = result.articles else {
+                    self.paginationModel.ended = true
                     return completion([])
                 }
                 
                 self.paginationModel.didReachEnd(totalResult: result.totalResults!)
-                self.paginationModel.updateState = .completed
                 self.paginationModel.incrementPage()
                 
-                completion(result.articles ?? [])
+                completion(articles)
             }
         }
     }

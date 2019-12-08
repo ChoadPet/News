@@ -10,10 +10,10 @@ import Foundation
 
 final class NewsListConfigurator {
     func configure(viewController: NewsListTableViewController, coordinator: Coordinator) {
-        let requestManager = RequestManager<NewsAPI>()
-        let reachability = Reachability()
-        let networkManager = NetworkManager(requestManager: requestManager, reachability: reachability)
+        let networkManager = NetworkManager(requestManager: RequestManager<NewsAPI>(),
+                                            reachability: Reachability())
         let storageManager = PersistenceStorage(dataStack: DataStack())
+        
         let presenter = NewsListPresenter(coordinator: coordinator,
                                           view: viewController,
                                           networkManager: networkManager,
