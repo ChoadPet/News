@@ -71,8 +71,8 @@ final class NewsListPresenter {
     }
     
     func didSelectNewsAt(_ index: Int) {
-        let object = dataSource[index]
-        coordinator.newsDetailViewController(model: object)
+        let model = dataSource[index]
+        coordinator.openNewsDetailViewController(model: model)
     }
     
     // MARK: - Private API
