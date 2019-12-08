@@ -9,9 +9,16 @@
 import RealmSwift
 
 struct ArticleOutput: Decodable {
-    let status: String
-    let totalResults: Int
+    let status: ResponseStatus
+    let code: String?
+    let message: String?
+    let totalResults: Int?
     let articles: [NewsEntity]?
+}
+
+enum ResponseStatus: String, Decodable {
+    case ok
+    case error
 }
 
 final class NewsSource: Object, Decodable {

@@ -74,17 +74,17 @@ final class NewsListPresenter {
     
     // MARK: - Private API
     private func requestNews(completion: @escaping (([NewsEntity]) -> Void)) {
-        let model = ArticleInput(pageSize: paginationModel.pageSize, page: paginationModel.page, language: Locale.current.languageCode ?? "en", keywordsOrPhrase: "apple")
+        let model = ArticleInput(pageSize: paginationModel.pageSize, page: paginationModel.page, language: Locale.current.languageCode ?? "en", keywordsOrPhrase: "fuck")
         if paginationModel.canMakeRequestForNextPage {
             self.paginationModel.updateState = .processing
             networkManager.provideEverythingNews(model: model) { [weak self] response in
                 guard let self = self else { return }
-                guard let result = response else {
+                guard let result = response, !(result.articles?.isEmpty ?? true) else {
                     self.paginationModel.updateState = .completed
                     return completion([])
                 }
                 
-                self.paginationModel.didReachEnd(totalResult: result.totalResults)
+                self.paginationModel.didReachEnd(totalResult: result.totalResults!)
                 self.paginationModel.updateState = .completed
                 self.paginationModel.incrementPage()
                 
