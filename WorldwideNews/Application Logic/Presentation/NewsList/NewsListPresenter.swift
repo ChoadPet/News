@@ -13,7 +13,7 @@ final class NewsListPresenter {
     private let coordinator: Coordinator
     private weak var view: NewsListViewProtocol?
     private let networkManager: NetworkManager
-    private let storageManager: PersistenceStorage<NewsEntity>
+    private let storageManager: PersistenceStorage
     
     /// Pagination prorperties
     private let pageSize = 10
@@ -30,7 +30,7 @@ final class NewsListPresenter {
     init(coordinator: Coordinator,
          view: NewsListViewProtocol,
          networkManager: NetworkManager,
-         persistenceStorageManager: PersistenceStorage<NewsEntity>) {
+         persistenceStorageManager: PersistenceStorage) {
         
         self.coordinator = coordinator
         self.view = view

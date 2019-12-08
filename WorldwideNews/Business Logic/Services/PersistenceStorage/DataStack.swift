@@ -8,10 +8,42 @@
 
 import RealmSwift
 
-final class DataStack<ResultType: Object> {
+final class DataStack {
     
-//    static let shared = DataStack()
+    func write(sequence: [Object], update: Realm.UpdatePolicy = .all) {
+        do {
+            let realm = try! Realm()
+            try realm.write {
+                realm.add(sequence, update: update)
+            }
+        } catch {
+            debugPrint("failed to write object to realm")
+        }
+    }
     
+    func getObjects<DistinctType: Object>(withPredicate predicate: NSPredicate?, sortedBy keyPath: String? = nil, ascending: Bool = true) -> [DistinctType] {
+        let realm = try! Realm()
+        var results = realm.objects(DistinctType.self)
+        
+        if let predicate = predicate {
+            results = results.filter(predicate)
+        }
+        
+        if let keyPath = keyPath {
+            results = results.sorted(byKeyPath: keyPath, ascending: ascending)
+        }
+        return Array(results)
+    }
     
-    
+    func removeObjectsOfType<DistinctType: Object>(_ type: DistinctType.Type) {
+        do {
+            let realm = try! Realm()
+            try realm.write {
+                let objects = realm.objects(type)
+                realm.delete(objects)
+            }
+        } catch {
+            debugPrint("failed  to remove object from realm")
+        }
+    }
 }

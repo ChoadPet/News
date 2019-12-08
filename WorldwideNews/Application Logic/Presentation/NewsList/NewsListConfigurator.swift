@@ -13,7 +13,7 @@ final class NewsListConfigurator {
         let requestManager = RequestManager<NewsAPI>()
         let reachability = Reachability()
         let networkManager = NetworkManager(requestManager: requestManager, reachability: reachability)
-        let storageManager = PersistenceStorage<NewsEntity>()
+        let storageManager = PersistenceStorage(dataStack: DataStack())
         let presenter = NewsListPresenter(coordinator: coordinator,
                                           view: viewController,
                                           networkManager: networkManager,

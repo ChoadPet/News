@@ -8,42 +8,32 @@
 
 import RealmSwift
 
-final class PersistenceStorage<ResultType: Object> {
+protocol Persistanable {
     
-   func write(sequence: Array<ResultType>, update: Realm.UpdatePolicy = .all) {
-        do {
-            let realm = try! Realm()
-            try realm.write {
-                realm.add(sequence, update: update)
-            }
-        } catch {
-            debugPrint("failed to write object to realm")
-        }
+    init(dataStack: DataStack)
+    
+    func write(sequence: [Object], update: Realm.UpdatePolicy)
+    func getObjects<DistinctType: Object>(withPredicate predicate: NSPredicate?, sortedBy keyPath: String?, ascending: Bool) -> [DistinctType]
+    func removeObjectsOfType<DistinctType: Object>(_ type: DistinctType.Type)
+}
+
+final class PersistenceStorage: Persistanable {
+    
+    private let dataStack: DataStack
+    
+    init(dataStack: DataStack) {
+        self.dataStack = dataStack
     }
     
-    func getObjects<DistinctType: Object>(withPredicate predicate: NSPredicate?, sortedBy keyPath: String? = nil, ascending: Bool = true) -> Array<DistinctType> {
-        let realm = try! Realm()
-        var results = realm.objects(DistinctType.self)
-        
-        if let predicate = predicate {
-            results = results.filter(predicate)
-        }
-        
-        if let keyPath = keyPath {
-            results = results.sorted(byKeyPath: keyPath, ascending: ascending)
-        }
-        return Array(results)
+    func write(sequence: [Object], update: Realm.UpdatePolicy = .all) {
+        dataStack.write(sequence: sequence, update: update)
+    }
+    
+    func getObjects<DistinctType: Object>(withPredicate predicate: NSPredicate?, sortedBy keyPath: String? = nil, ascending: Bool = true) -> [DistinctType] {
+        return dataStack.getObjects(withPredicate: predicate, sortedBy: keyPath, ascending: ascending)
     }
     
     func removeObjectsOfType<DistinctType: Object>(_ type: DistinctType.Type) {
-        do {
-            let realm = try! Realm()
-            try realm.write {
-                let objects = realm.objects(type)
-                realm.delete(objects)
-            }
-        } catch {
-            debugPrint("failed  to remove object from realm")
-        }
+        dataStack.removeObjectsOfType(type)
     }
 }
