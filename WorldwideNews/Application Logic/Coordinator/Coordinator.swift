@@ -12,12 +12,14 @@ protocol Coordinatable {
     
     init(router: Routable)
     
+    var router: Routable { get }
+    
     func initialViewController()
 }
 
 final class Coordinator: Coordinatable {
     
-    private let router: Routable
+    let router: Routable
     
     init(router: Routable) {
         self.router = router
