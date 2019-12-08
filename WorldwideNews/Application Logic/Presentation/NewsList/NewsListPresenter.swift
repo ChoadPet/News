@@ -15,11 +15,7 @@ final class NewsListPresenter {
     private let networkManager: NetworkManager
     private let storageManager: PersistenceStorage
     
-    /// Pagination prorperties
-    private let pageSize = 10
-    private var page = 1
-    private var updating = false
-    private var ended = false
+    private let paginationModel: PaginationEntity
     
     private(set) var dataSource: [NewsEntity] = [] {
         didSet {
@@ -36,6 +32,7 @@ final class NewsListPresenter {
         self.view = view
         self.networkManager = networkManager
         self.storageManager = persistenceStorageManager
+        self.paginationModel = PaginationEntity(pageSize: 10, page: 1)
         
         refreshData()
     }
@@ -48,8 +45,8 @@ final class NewsListPresenter {
     
     /// Used for refresh data when user used pull to refresh
     func refreshData() {
-        page = 1
-        ended = false
+        paginationModel.page = 1
+        paginationModel.ended = false
         if networkManager.reachability.isReachable() {
             requestNews { [weak self] news in
                 self?.dataSource.removeAll()
@@ -77,21 +74,19 @@ final class NewsListPresenter {
     
     // MARK: - Private API
     private func requestNews(completion: @escaping (([NewsEntity]) -> Void)) {
-        let model = ArticleInput(pageSize: pageSize, page: page, language: Locale.current.languageCode ?? "en", keywordsOrPhrase: "apple")
-        if !self.updating && !self.ended {
-            self.updating = true
+        let model = ArticleInput(pageSize: paginationModel.pageSize, page: paginationModel.page, language: Locale.current.languageCode ?? "en", keywordsOrPhrase: "apple")
+        if paginationModel.canMakeRequestForNextPage {
+            self.paginationModel.updateState = .processing
             networkManager.provideEverythingNews(model: model) { [weak self] response in
                 guard let self = self else { return }
                 guard let result = response else {
-                    self.updating = false
+                    self.paginationModel.updateState = .completed
                     return completion([])
                 }
                 
-                // If current page more or equal to total pages
-                // we don't need to make request anymore
-                self.ended = self.page >= result.totalResults
-                self.updating = false
-                self.page += 1
+                self.paginationModel.didReachEnd(totalResult: result.totalResults)
+                self.paginationModel.updateState = .completed
+                self.paginationModel.incrementPage()
                 
                 completion(result.articles ?? [])
             }
