@@ -8,9 +8,6 @@
 
 import Foundation
 
-// TODO: Move somewhere else later
-
-
 typealias Parameters = [String: Any]
 
 enum NewsAPI {
@@ -57,7 +54,7 @@ extension NewsAPI: ApiProvider {
     }
     
     var validate: Validation {
-        return .success
+        return .none
     }
 }
 
