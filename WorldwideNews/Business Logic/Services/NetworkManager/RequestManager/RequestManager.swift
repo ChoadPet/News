@@ -37,7 +37,6 @@ final class RequestManager<Api: ApiProvider> {
     private func createURLRequest(forAPI api: Api) -> URLRequest {
         var components = URLComponents(url: URL(api: api), resolvingAgainstBaseURL: false)!
         components.queryItems = api.parameters.map { URLQueryItem(name: $0, value: "\($1)") }
-        components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
         
         var request = URLRequest(url: components.url!)
         request.httpMethod = api.method.rawValue

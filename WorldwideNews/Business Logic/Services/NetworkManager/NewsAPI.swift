@@ -9,7 +9,7 @@
 import Foundation
 
 // TODO: Move somewhere else later
-private let apiKey = "0c38053a562747a4bff311490c1ad6be"
+
 
 typealias Parameters = [String: Any]
 
@@ -45,7 +45,7 @@ extension NewsAPI: ApiProvider {
         switch self {
         case .everything, .topHeadlines:
             return ["Content-Type": "application/json",
-                    "Authorization": apiKey]
+                    "Authorization": Constants.apiKey]
         }
     }
     
