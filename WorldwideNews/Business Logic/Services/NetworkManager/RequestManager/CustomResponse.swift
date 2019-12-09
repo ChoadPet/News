@@ -18,4 +18,9 @@ final class CustomResponse {
         self.data = data
         self.response = response
     }
+    
+    /// TODO: Implement later
+    func validate(statusCodes: ClosedRange<Int> = 200...299) -> Bool {
+        return statusCodes.contains(response.statusCode)
+    }
 }

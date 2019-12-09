@@ -14,4 +14,5 @@ protocol ApiProvider {
     var parameters: Parameters { get }
     var headers: [String: String] { get }
     var method: HTTPMethod { get }
+    var validate: Validation { get }
 }

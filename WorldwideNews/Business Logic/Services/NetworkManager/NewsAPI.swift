@@ -55,6 +55,10 @@ extension NewsAPI: ApiProvider {
             return .get
         }
     }
+    
+    var validate: Validation {
+        return .success
+    }
 }
 
 private extension NewsAPI {

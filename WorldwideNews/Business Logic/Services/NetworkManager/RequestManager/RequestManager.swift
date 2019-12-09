@@ -8,6 +8,8 @@
 
 import Foundation
 
+typealias CompletionHandler = ((Result<CustomResponse, Error>) -> Void)
+
 protocol RequestManagerProvider {
     
     associatedtype Api: ApiProvider
@@ -49,7 +51,7 @@ final class RequestManager<Api: ApiProvider> {
 
 extension RequestManager: RequestManagerProvider {
     
-    func request(api: Api, completion: @escaping (Result<CustomResponse, Error>) -> Void) {
+    func request(api: Api, completion: @escaping CompletionHandler) {
         let urlRequest = createURLRequest(forAPI: api)
         
         createDataTask(with: urlRequest) { data, response, error in

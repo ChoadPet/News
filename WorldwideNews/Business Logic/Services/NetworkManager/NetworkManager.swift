@@ -24,19 +24,6 @@ final class NetworkManager {
             guard let self = self else { return }
             switch result {
             case .success(let response):
-                let articles = try! self.decodeData(response.data, ofType: ArticleOutput.self)
-                completion(articles)
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    func provideTopHeadlinesNews(model: ArticleInput, completion: @escaping (ArticleOutput?) -> Void) {
-        requestManager.request(api: .topHeadlines(model: model)) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let response):
                 let articles = try? self.decodeData(response.data, ofType: ArticleOutput.self)
                 completion(articles)
             case .failure(let error):
