@@ -15,19 +15,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var coordinator: Coordinator!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        let navigationController = NewsNavigationController()
-        let router = Router(navigationController: navigationController)
-        
-        coordinator = Coordinator(router: router)
-        coordinator.initialViewController()
-        
         window = UIWindow(frame: UIScreen.main.bounds)
         
+        coordinator = Coordinator(window: window!)
+        coordinator.startFlow()
+        
         // Change global tint color
-        window?.tintColor = UIColor.systemYellow
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
+        window!.tintColor = UIColor.systemYellow
         
         return true
     }

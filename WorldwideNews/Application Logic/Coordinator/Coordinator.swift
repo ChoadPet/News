@@ -10,25 +10,26 @@ import UIKit
 
 protocol Coordinatable {
     
-    init(router: Routable)
-    
-    var router: Routable { get }
-    
-    func initialViewController()
+    func startFlow()
 }
 
 final class Coordinator: Coordinatable {
     
-    let router: Routable
+    private let window: UIWindow
+    private let router: Routable
     
-    init(router: Routable) {
-        self.router = router
+    init(window: UIWindow) {
+        self.window = window
+        self.router = Router(navigationController: NewsNavigationController())
     }
     
     // MARK: - Public API
-    func initialViewController() {
+    func startFlow() {
         let viewController = createNewsListViewController()
         router.initialViewControllers([viewController])
+        
+        window.rootViewController = router.navigationController
+        window.makeKeyAndVisible()
     }
     
     func openNewsDetailViewController(model: NewsEntity) {

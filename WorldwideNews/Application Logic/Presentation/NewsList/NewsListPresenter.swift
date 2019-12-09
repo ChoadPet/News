@@ -48,10 +48,17 @@ final class NewsListPresenter {
         paginationModel.page = 1
         paginationModel.ended = false
         
+        let news = getCachedNews()
+        dataSource = news
+        
         if networkManager.reachability.isReachable() {
             requestNews { [weak self] news in
                 self?.dataSource.removeAll()
                 self?.dataSource.append(contentsOf: news)
+                
+                /// Clear cache and re-write fresh result
+                self?.clearCache()
+                self?.write(news: news)
             }
         }
     }
@@ -76,9 +83,10 @@ final class NewsListPresenter {
         let model = ArticleInput(pageSize: paginationModel.pageSize, page: paginationModel.page, language: Locale.current.languageCode ?? "en", keywordsOrPhrase: "dogs")
         
         if paginationModel.canMakeRequestForNextPage {
+            
             paginationModel.updateState = .processing
             networkManager.provideEverythingNews(model: model) { [weak self] response in
-                guard let self = self else { return }
+                guard let self = self else { return completion([]) }
                 self.paginationModel.updateState = .completed
                 guard let result = response, let articles = result.articles else {
                     self.paginationModel.ended = true
